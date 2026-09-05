@@ -1,8 +1,3 @@
-Absolutely. For a job application, the README should be **clean, professional, and easy for a recruiter to understand in 30 seconds**.
-
- Replace your current `README.md` with this:
-
- GitHub README
 
 # IAM Access Request & Provisioning Tracker
 
