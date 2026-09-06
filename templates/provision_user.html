@@ -1,0 +1,360 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IAM Provisioning</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    .header {
+        background: #172554;
+        color: white;
+        padding: 20px 40px;
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 26px;
+    }
+
+    .header p {
+        margin: 6px 0 0;
+        color: #c7d2fe;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+        margin-top: 0;
+        color: #172554;
+    }
+
+    .step {
+        margin-bottom: 25px;
+    }
+
+    .step-title {
+        font-size: 17px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: #374151;
+    }
+
+    .options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .option {
+        position: relative;
+    }
+
+    .option input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .option label {
+        display: block;
+        padding: 18px;
+        border: 2px solid #d1d5db;
+        border-radius: 10px;
+        cursor: pointer;
+        background: #fff;
+        transition: 0.2s;
+    }
+
+    .option label:hover {
+        border-color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .option input:checked + label {
+        border-color: #2563eb;
+        background: #dbeafe;
+        box-shadow: 0 0 0 2px #93c5fd;
+    }
+
+    .employee-id {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1d4ed8;
+    }
+
+    .employee-name {
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+    .status {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: #dcfce7;
+        color: #166534;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .group-name {
+        font-size: 17px;
+        font-weight: bold;
+        color: #111827;
+    }
+
+    .group-description {
+        margin-top: 7px;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .button {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        padding: 14px;
+        background: #2563eb;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        background: #1d4ed8;
+    }
+
+    .stats {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .stat {
+        flex: 1;
+        min-width: 200px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 18px;
+    }
+
+    .stat strong {
+        color: #1d4ed8;
+        font-size: 20px;
+    }
+
+    .back {
+        display: inline-block;
+        margin-top: 10px;
+        text-decoration: none;
+        color: #2563eb;
+        font-weight: bold;
+    }
+
+    .empty {
+        padding: 20px;
+        background: #fef2f2;
+        color: #991b1b;
+        border-radius: 8px;
+        border: 1px solid #fecaca;
+    }
+</style>
+
+</head> <body>
+<div class="header">
+    <h1>IAM Provisioning</h1>
+    <p>User Provisioning & Access Management</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Provision User Access</h2>
+
+        <p>
+            Select an active employee and the directory group
+            that should be assigned.
+        </p>
+
+        {% if users and groups %}
+
+        <form method="POST" action="{{ url_for('provision_user') }}">
+
+            <!-- =====================================
+                 SELECT USER
+                 ===================================== -->
+
+            <div class="step">
+
+                <div class="step-title">
+                    1. Select Employee
+                </div>
+
+                <div class="options">
+
+                    {% for user_item in users %}
+
+                    <div class="option">
+
+                        <input
+                            type="radio"
+                            id="user_{{ user_item['employee_id'] }}"
+                            name="employee_id"
+                            value="{{ user_item['employee_id'] }}"
+                            required
+                        >
+
+                        <label for="user_{{ user_item['employee_id'] }}">
+
+                            <div class="employee-id">
+                                {{ user_item['employee_id'] }}
+                            </div>
+
+                            <div class="employee-name">
+                                {{ user_item['employee_name'] }}
+                            </div>
+
+                            <span class="status">
+                                {{ user_item['status'] }}
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================
+                 SELECT GROUP
+                 ===================================== -->
+
+            <div class="step">
+
+                <div class="step-title">
+                    2. Select Directory Group
+                </div>
+
+                <div class="options">
+
+                    {% for group_item in groups %}
+
+                    <div class="option">
+
+                        <input
+                            type="radio"
+                            id="group_{{ loop.index }}"
+                            name="group_name"
+                            value="{{ group_item['group_name'] }}"
+                            required
+                        >
+
+                        <label for="group_{{ loop.index }}">
+
+                            <div class="group-name">
+                                {{ group_item['group_name'] }}
+                            </div>
+
+                            <div class="group-description">
+                                Directory security group
+                            </div>
+
+                        </label>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================
+                 SUBMIT
+                 ===================================== -->
+
+            <button type="submit" class="button">
+                Provision Access
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <div class="empty">
+
+            No active users or directory groups are available.
+
+            <br><br>
+
+            Please check the database configuration.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =============================================
+         DIRECTORY STATISTICS
+         ============================================= -->
+
+    <div class="card">
+
+        <h2>Directory Status</h2>
+
+        <div class="stats">
+
+            <div class="stat">
+                Active users:
+                <br>
+                <strong>{{ users|length }}</strong>
+            </div>
+
+            <div class="stat">
+                Available groups:
+                <br>
+                <strong>{{ groups|length }}</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <a class="back" href="{{ url_for('home') }}">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+</body> </html>
