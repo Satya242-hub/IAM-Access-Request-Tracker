@@ -102,29 +102,6 @@
 | HTML/CSS | User interface |
 | Jinja2 | Server-side templates |
 
- ## Project Structure
-
-```
-iam-access-request-tracker/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-│
-├── templates/
-│   ├── index.html
-│   ├── create_ticket.html
-│   ├── ticket.html
-│   ├── provision_user.html
-│   ├── user_access.html
-│   ├── directory_users.html
-│   ├── directory_groups.html
-│   └── access_review.html
-│
-└── static/
-    └── ...
-```
 
  ## Database
 
